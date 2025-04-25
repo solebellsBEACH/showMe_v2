@@ -1,0 +1,34 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18 
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Start Next.js
+        run: yarn dev &
+        env:
+          NODE_ENV: test
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v5
+        with:
+          start: yarn dev
+          wait-on: 'http://localhost:3000'
